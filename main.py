@@ -3,7 +3,7 @@
 import sys
 import json
 from flask import Flask, request
-from operations.WalletOps import create_wallet, check_funding
+from operations.WalletOps import create_wallet, check_funding as get_funding
 
 app = Flask(__name__)
 
@@ -13,18 +13,17 @@ def create_user():
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
         body = request.json
-        # TODO check if username already exists
-        # If not generate a wallet
+
         with open("./db.json") as file:
             string = file.read()
             obj = json.loads(string)
         
-        wallet_address, private_key = create_wallet()
-
         for user in obj["users"]:
             if (user["username"] == body["username"]):
                 print("HERE")
                 return "This username is already taken."
+
+        wallet_address, private_key = create_wallet()
 
         obj["users"].append({ "username": body["username"], "public_address": wallet_address, "private_key": private_key })
 
@@ -34,6 +33,34 @@ def create_user():
 
         print("Processing new user: {}".format(json))
         return "ok\n"
+    else:
+        # Handle unsupported content types
+        return 'Content-type not supported.'
+
+
+''' Handle Check Funding POST requests '''
+@app.route("/check_funding", methods=['POST'])
+def check_funding():
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        body = request.json
+        
+        with open("./db.json") as file:
+            string = file.read()
+            obj = json.loads(string)
+
+        user_exist = False
+        requested_user = {}
+
+        for user in obj["users"]:
+            if (user["username"] == body["username"]):
+                user_exist = True
+                requested_user = user
+
+        if (user_exist == False): 
+            return "This user does not exist."
+
+        return get_funding(requested_user["public_address"])
     else:
         # Handle unsupported content types
         return 'Content-type not supported.'

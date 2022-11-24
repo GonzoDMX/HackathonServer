@@ -19,12 +19,12 @@ def create_wallet():
 
 def check_funding(wallet_address):
     client = get_algod_client()
-    account_info = algod_client.account_info(wallet_address)
+    account_info = client.account_info(wallet_address)
     amount = account_info.get('amount')
     # Returns a dictionary of assets
     assets = account_info.get('assets')
     for asa in assets:
         if asa['asset-id'] == 14512352:
-            token_amount = int(asa['amount'])
+            amount = int(asa['amount'])
     print("Account balance: {} microAlgos".format(account_info.get('amount')) + "\n")
-    return int(amount)
+    return {"amount": int(amount)}
