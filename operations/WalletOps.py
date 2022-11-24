@@ -49,9 +49,9 @@ def make_transaction(user, dest, amount):
     try:
         confirmed_txn = transaction.wait_for_confirmation(algod_client, txid, 4)  
     except Exception as err:
-        return {"transaction" : "failed", "tokens_sent" : "0"}
+        return {"transaction" : "failed", "tokens_sent" : "0", "username" : user["username"]}
 
-    return {"transaction": "confirmed", "tokens_sent" : str(amount)}
+    return {"transaction": "confirmed", "tokens_sent" : str(amount), "username" : user["username"]}
 
 ''' User exchanges data for tokens/points '''
 def exchange_data_for_tokens(user, amount):
