@@ -97,12 +97,12 @@ def transaction():
             return "This user does not exist."
 
         ret = make_transaction(requested_user, dest_user, int(body["amount"]))
-        '''
+        
         if ret["transaction"] == "confirmed":
             send(user["username"] + ' sent you ' + ret["tokens_sent"] + 'Bouygues Tokens.', to=dest["session_id"])
         else:
             send('Transaction with ' + user["username"] + 'failed, check funds.', to=dest["session_id"])
-        '''
+        
         return ret
     else:
         # Handle unsupported content types
@@ -188,14 +188,15 @@ def handle_connection(data):
 
 
 if __name__ == "__main__":
-    # socketio.run(app, host='0.0.0.0', port=50)
     arg = sys.argv[1].lower()
     if arg == "local":
         print("Starting local server@127.0.0.1:5000...")
         app.run(host='127.0.0.1', port=5000)
+        socketio.run(app, host='127.0.0.1', port=5001)
     elif arg == "prod":
         print("Starting production server@0.0.0.0:80...")
         app.run(host='0.0.0.0', port=80)
+        socketio.run(app, host='0.0.0.0', port=50)
     else:
         print('    Missing argument:\n' + 
               '\tlocal - for running tests\n' + 
