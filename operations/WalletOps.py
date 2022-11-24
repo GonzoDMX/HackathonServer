@@ -30,8 +30,8 @@ def make_transaction(user, dest, amount):
     algod_client = get_algod_client()
     # ------------- DEFINE THE TRANSACTION ---------------------
     params = algod_client.suggested_params()    # Sets the client what will do the transaction for us (with default params)
-    params.flat_fee = True     # idem
-    params.fee = constants.MIN_TXN_FEE                           # idem
+    params.flat_fee = constants.MIN_TXN_FEE 
+    params.fee = 1000
     
     # Add a personalized note to the transaction
     note = "Thank you for using Bouygues!".encode()
@@ -47,18 +47,20 @@ def make_transaction(user, dest, amount):
 
     # ------------------ WAIT FOR CONFIRMATION ---------------------
     try:
-        confirmed_txn = transaction.wait_for_confirmation(algod_client, txid, 4)  
+        confirmed_txn = transaction.wait_for_confirmation(algod_client, txid, 4)
+        print("Transaction confirmed!")
+        return {"transaction": "confirmed", "tokens_sent" : str(amount), "username" : user["username"]}
     except Exception as err:
+        print(err)
         return {"transaction" : "failed", "tokens_sent" : "0", "username" : user["username"]}
-
-    return {"transaction": "confirmed", "tokens_sent" : str(amount), "username" : user["username"]}
+    
 
 ''' User exchanges data for tokens/points '''
 def exchange_data_for_tokens(user, amount):
     algod_client = get_algod_client()
     params = algod_client.suggested_params()
-    params.flat_fee = constants.MIN_TXN_FEE
-    params.fee = 1000
+    params.flat_fee = constants.MIN_TXN_FEE 
+    params.fee = 1000 
     note = "Thank you for using Bouygues Token!".encode()
     unsigned_txn = transaction.PaymentTxn(bouygues["public_address"], params, user["public_address"], amount, None, note)
     signed_txn = unsigned_txn.sign(bouygues["private_key"])
