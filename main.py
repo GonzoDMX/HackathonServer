@@ -5,6 +5,7 @@ import json
 from flask import Flask, request
 from flask_socketio import SocketIO, send, emit
 from operations.WalletOps import create_wallet, check_funding as get_funding, make_transaction, exchange_data_for_tokens
+from flask_sock import Sock
 
 app = Flask(__name__)
 #socketio = SocketIO(app)
