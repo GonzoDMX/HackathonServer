@@ -96,7 +96,12 @@ def transaction():
         if (user_exist == False or dest_user_exist == False):
             return "This user does not exist."
 
-        return make_transaction(requested_user, dest_user, int(body["amount"]))
+        ret = make_transaction(requested_user, dest_user, int(body["amount"]))
+        if ret["transaction"] == "confirmed":
+            send(user["username"] + ' sent you ' + ret["tokens_sent"] + 'Bouygues Tokens.', to=dest["session_id"])
+        else:
+            send('Transaction with ' + user["username"] + 'failed, check funds.', to=dest["session_id"])
+        return ret
     else:
         # Handle unsupported content types
         return 'Content-type not supported.'

@@ -51,8 +51,6 @@ def make_transaction(user, dest, amount):
     except Exception as err:
         return {"transaction" : "failed", "tokens_sent" : "0"}
 
-    send(user["username"] + ' sent you some money.', to=dest["session_id"])
-
     return {"transaction": "confirmed", "tokens_sent" : str(amount)}
 
 ''' User exchanges data for tokens/points '''
