@@ -107,7 +107,7 @@ def transaction():
             return "This user does not exist."
 
         transaction_ret = make_transaction(requested_user, dest_user, int(body["amount"]))
-        if notify not None:
+        if notify is not None:
             if transaction_ret["transaction"] == "confirmed":
                 notify.send(transaction_ret["username"] + ' sent you ' + transaction_ret["tokens_sent"] + 'Bouygues Tokens.')
             else:
