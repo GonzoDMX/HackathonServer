@@ -138,6 +138,9 @@ def exchange():
             if (user["username"] == body["username"]):
                 user_exist = True
                 requested_user = user
+            if (user["username"] == body["dest"]):
+                user_exist = True
+                dest_user = user
 
         if (user_exist == False or dest_user_exist == False):
             return "This user does not exist."
