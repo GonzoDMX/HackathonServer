@@ -114,7 +114,7 @@ def transaction():
                 notify.send('Transaction with ' + transaction_ret["username"] + 'failed.')
                 transaction_catch == True
                 notify.close()
-        return ret
+        return transaction_ret
     else:
         # Handle unsupported content types
         return 'Content-type not supported.'
