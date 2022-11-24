@@ -109,12 +109,6 @@ def transaction():
             continue
         transaction_final = False
         transaction_catch == False
-        '''
-        if ret["transaction"] == "confirmed":
-            send(user["username"] + ' sent you ' + ret["tokens_sent"] + 'Bouygues Tokens.', to=dest["session_id"])
-        else:
-            send('Transaction with ' + user["username"] + 'failed, check funds.', to=dest["session_id"])
-        '''
         return ret
     else:
         # Handle unsupported content types
@@ -178,29 +172,9 @@ def sign_contract():
         # Handle unsupported content types
         return 'Content-type not supported.'
 
-'''
-@socketio.on('connect_event')
-def handle_connection(data):
-    print('received message: ' + data)
-    with open("./db.json") as file:
-        string = file.read()
-        obj = json.loads(string)
-
-    user_exist = False
-
-    for user in obj["users"]:
-        if (user["username"] == data["username"]):
-            user_exist = True
-            user["session_id"] = request.sid;
-
-    if (user_exist == False): 
-        return "This user does not exist."
-
-    send("Connected.")
-''' 
     
-@sock.route('/event')
-def handle_connection(ws):
+@sock.route('/')
+def handle_socket(ws):
     data = ws.receive()
     print('received message: ' + data)
     with open("./db.json") as file:
@@ -210,7 +184,7 @@ def handle_connection(ws):
     user_exist = False
 
     for user in obj["users"]:
-        if (user["username"] == data["username"]):
+        if (user["username"] == data):
             user_exist = True
             user["session_id"] = request.sid;
 
