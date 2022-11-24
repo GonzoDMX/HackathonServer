@@ -145,7 +145,7 @@ def handle_connection(data):
     if (user_exist == False): 
         return "This user does not exist."
 
-    return "Connected."
+    send("Connected.")
 
 
 if __name__ == "__main__":
