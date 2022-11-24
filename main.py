@@ -189,7 +189,7 @@ def handle_socket(ws):
             user_exist = True
 
     # If user doesn't exist abort here
-    if !user_exist: 
+    if not user_exist: 
         ws.send("This user does not exist.")
         ws.close()
         return
