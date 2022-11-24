@@ -214,10 +214,11 @@ def handle_socket(ws):
         return
         
     ws.send("Connected.")
-    print("Serving user: {} - With {} Gb to share".format(rec_data["username"]))
+    print("Serving user: {}".format(rec_data["username"]))
     
     while tranny == False:
         pass
+    print("Send notif")
     ws.send("Transaction complete")
     tranny = False
     ws.close()
