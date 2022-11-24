@@ -181,7 +181,7 @@ def handle_connection(data):
 
 
 if __name__ == "__main__":
-    socketio.run(app, host='0.0.0.0', port=50)
+    # socketio.run(app, host='0.0.0.0', port=50)
     arg = sys.argv[1].lower()
     if arg == "local":
         print("Starting local server@127.0.0.1:5000...")
