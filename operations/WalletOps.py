@@ -2,6 +2,7 @@
 
 import json
 import base64
+from flask_socketio import send, emit
 from algosdk import account, mnemonic, constants
 from algosdk.v2client import algod
 from algosdk.future import transaction
@@ -20,7 +21,7 @@ def create_wallet():
     print("My passphrase: {}".format(m))
     return (my_address, secret_key)
 
-def make_transaction(user, dest_address, amount):
+def make_transaction(user, dest, amount):
     algod_client = get_algod_client()
     # ------------- DEFINE THE TRANSACTION ---------------------
     params = algod_client.suggested_params()    # Sets the client what will do the transaction for us (with default params)
@@ -31,7 +32,7 @@ def make_transaction(user, dest_address, amount):
     note = "Thank you for using Bouygues!".encode()
     
     # Unsigned Transaction Object defined here
-    unsigned_txn = transaction.PaymentTxn(user["public_address"], params, dest_address, amount, None, note)
+    unsigned_txn = transaction.PaymentTxn(user["public_address"], params, dest["public_address"], amount, None, note)
     
     # ----------------- SIGN THE TRANSACTION WITH PRIVATE KEY ---------
     signed_txn = unsigned_txn.sign(user["private_key"])
@@ -46,6 +47,8 @@ def make_transaction(user, dest_address, amount):
         confirmed_txn = transaction.wait_for_confirmation(algod_client, txid, 4)  
     except Exception as err:
         return {'transaction' : 'Failed'}
+
+    send(user["username"] + ' sent you some money.', to=dest["session_id"])
 
     return {"transaction": base64.b64decode(confirmed_txn["txn"]["txn"]["note"]).decode()}
 

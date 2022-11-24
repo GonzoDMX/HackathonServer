@@ -3,9 +3,11 @@
 import sys
 import json
 from flask import Flask, request
+from flask_socketio import SocketIO, send, emit
 from operations.WalletOps import create_wallet, check_funding as get_funding, make_transaction
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 ''' Handle New User POST requests '''
 @app.route("/create_user", methods=['POST'])
@@ -25,7 +27,7 @@ def create_user():
 
         wallet_address, private_key = create_wallet()
 
-        obj["users"].append({ "username": body["username"], "public_address": wallet_address, "private_key": private_key })
+        obj["users"].append({ "username": body["username"], "public_address": wallet_address, "private_key": private_key, "session_id": "" })
 
         with open("./db.json", 'w') as out_file:
             out = json.dumps(obj)
@@ -126,7 +128,28 @@ def sign_contract():
         return 'Content-type not supported.'
 
 
+@socketio.on('connect_event')
+def handle_connection(data):
+    print('received message: ' + data)
+    with open("./db.json") as file:
+        string = file.read()
+        obj = json.loads(string)
+
+    user_exist = False
+
+    for user in obj["users"]:
+        if (user["username"] == data["username"]):
+            user_exist = True
+            user["session_id"] = request.sid;
+
+    if (user_exist == False): 
+        return "This user does not exist."
+
+    return "Connected."
+
+
 if __name__ == "__main__":
+    socketio.run(app)
     arg = sys.argv[1].lower()
     if arg == "local":
         print("Starting local server@127.0.0.1:5000...")
