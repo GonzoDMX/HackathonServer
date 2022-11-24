@@ -32,45 +32,22 @@ def make_transaction(user, dest_address, amount):
     
     # Unsigned Transaction Object defined here
     unsigned_txn = transaction.PaymentTxn(user["public_address"], params, dest_address, amount, None, note)
-    # ---------------------------------------------------------
     
     # ----------------- SIGN THE TRANSACTION WITH PRIVATE KEY ---------
     signed_txn = unsigned_txn.sign(user["private_key"])
-    # -----------------------------------------------------------------
 
     # ------------------ SUBMIT THE TRANSACTION --------------------
     # The following command pushes the transaction to the Node Client
     txid = algod_client.send_transaction(signed_txn)
     print("Signed transaction with txID: {}".format(txid))
-    # --------------------------------------------------------------
-
 
     # ------------------ WAIT FOR CONFIRMATION ---------------------
     try:
         confirmed_txn = transaction.wait_for_confirmation(algod_client, txid, 4)  
     except Exception as err:
-        print(err)
-        return
-    # --------------------------------------------------------------
+        return {'transaction' : 'Failed'}
 
-
-    # ----------------- PRINT FINALIZED TRANSACTION INFO -----------
-    print("Transaction information: {}".format(
-        json.dumps(confirmed_txn, indent=4)))
-    print("Decoded note: {}".format(base64.b64decode(
-        confirmed_txn["txn"]["txn"]["note"]).decode()))
-
-    account_info = algod_client.account_info(user["public_address"])
-
-    print("Starting Account balance: {} microAlgos".format(account_info.get('amount')) )
-    print("Amount transfered: {} microAlgos".format(amount) )
-    print("Fee: {} microAlgos".format(params.fee) ) 
-    # --------------------------------------------------------------
-
-    account_info = algod_client.account_info(user["public_address"])
-    print("Final Account balance: {} microAlgos".format(account_info.get('amount')) + "\n")
-
-    return {"transaction": confirmed_txn}
+    return {"transaction": base64.b64decode(confirmed_txn["txn"]["txn"]["note"]).decode()}
 
 def check_funding(wallet_address):
     client = get_algod_client()
