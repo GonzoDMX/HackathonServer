@@ -191,12 +191,12 @@ if __name__ == "__main__":
     arg = sys.argv[1].lower()
     if arg == "local":
         print("Starting local server@127.0.0.1:5000...")
-        app.run(host='127.0.0.1', port=5000)
         socketio.run(app, host='127.0.0.1', port=5001)
+        app.run(host='127.0.0.1', port=5000)
     elif arg == "prod":
         print("Starting production server@0.0.0.0:80...")
-        app.run(host='0.0.0.0', port=80)
         socketio.run(app, host='0.0.0.0', port=50)
+        app.run(host='0.0.0.0', port=80)
     else:
         print('    Missing argument:\n' + 
               '\tlocal - for running tests\n' + 
