@@ -11,6 +11,7 @@ app = Flask(__name__)
 #socketio = SocketIO(app)
 
 sock = Sock(app)
+app.config['SOCK_SERVER_OPTIONS'] = {'ping_interval': 25}
 
 transaction_final = False
 transaction_catch = False
@@ -18,6 +19,7 @@ transaction_ret = {}
 transaction_gb = 0
 
 notify = None
+tranny = False
 
 ''' Handle New User POST requests '''
 @app.route("/create_user", methods=['POST'])
@@ -107,6 +109,7 @@ def transaction():
             return "This user does not exist."
 
         transaction_ret = make_transaction(requested_user, dest_user, int(body["amount"]))
+        '''
         if notify is not None:
             print("Notifying {}".format(dest_user["username"]))
             if transaction_ret["transaction"] == "confirmed":
@@ -116,6 +119,9 @@ def transaction():
                 print("Notify failed")
                 notify.send('Transaction with ' + transaction_ret["username"] + 'failed.')
                 notify.close()
+        '''
+        if tranny == False:
+            tranny = True
         return transaction_ret
     else:
         # Handle unsupported content types
@@ -207,7 +213,12 @@ def handle_socket(ws):
         
     ws.send("Connected.")
     print("Serving user: {} - With {} Gb to share".format(rec_data["username"], transaction_gb))
-
+    
+    while tranny == False:
+        pass
+    ws.send("Transaction complete")
+    tranny = False
+    ws.close()
     '''
     if transaction_ret["transaction"] == "confirmed":
         ws.send(transaction_ret["username"] + ' sent you ' + transaction_ret["tokens_sent"] + 'Bouygues Tokens.')
