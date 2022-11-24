@@ -63,8 +63,10 @@ def make_transaction(user, dest_address):
     print("Decoded note: {}".format(base64.b64decode(
         confirmed_txn["txn"]["txn"]["note"]).decode()))
 
+    account_info = algod_client.account_info(user["public_address"])
+
     print("Starting Account balance: {} microAlgos".format(account_info.get('amount')) )
-    print("Amount transfered: {} microAlgos".format(amount) )    
+    print("Amount transfered: {} microAlgos".format(amount) )
     print("Fee: {} microAlgos".format(params.fee) ) 
     # --------------------------------------------------------------
 
