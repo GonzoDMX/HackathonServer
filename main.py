@@ -3,7 +3,7 @@
 import sys
 import json
 from flask import Flask, request
-from operations.WalletOps import create_wallet, check_funding as get_funding
+from operations.WalletOps import create_wallet, check_funding as get_funding, make_transaction
 
 app = Flask(__name__)
 
@@ -71,9 +71,30 @@ def check_funding():
 def transaction():
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
-        json = request.json
-        print("Processing transaction: {}".format(json))
-        return "ok\n"
+        body = request.json
+        print("Processing transaction: {}".format(body))
+
+        with open("./db.json") as file:
+            string = file.read()
+            obj = json.loads(string)
+
+        user_exist = False
+        dest_user_exist = False
+        requested_user = {}
+        dest_user = {}
+
+        for user in obj["users"]:
+            if (user["username"] == body["username"]):
+                user_exist = True
+                requested_user = user
+            if (user["username"] == body["dest"]):
+                dest_user_exist = True
+                dest_user = user
+
+        if (user_exist == False or dest_user_exist == False):
+            return "This user does not exist."
+
+        return make_transaction(requested_user, dest_user["public_address"])
     else:
         # Handle unsupported content types
         return 'Content-type not supported.'
