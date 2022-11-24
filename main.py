@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import json
 from flask import Flask, request
 from operations.WalletOps import create_wallet, check_funding
 
@@ -11,10 +12,26 @@ app = Flask(__name__)
 def create_user():
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
-        json = request.json
+        body = request.json
         # TODO check if username already exists
         # If not generate a wallet
+        with open("./db.json") as file:
+            string = file.read()
+            obj = json.loads(string)
+        
         wallet_address, private_key = create_wallet()
+
+        for user in obj["users"]:
+            if (user["username"] == body["username"]):
+                print("HERE")
+                return "This username is already taken."
+
+        obj["users"].append({ "username": body["username"], "public_address": wallet_address, "private_key": private_key })
+
+        with open("./db.json", 'w') as out_file:
+            out = json.dumps(obj)
+            out_file.write(out)
+
         print("Processing new user: {}".format(json))
         return "ok\n"
     else:
