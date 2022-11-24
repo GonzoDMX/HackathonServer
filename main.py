@@ -17,6 +17,8 @@ transaction_catch = False
 transaction_ret = {}
 transaction_gb = 0
 
+notify = None
+
 ''' Handle New User POST requests '''
 @app.route("/create_user", methods=['POST'])
 def create_user():
@@ -105,11 +107,13 @@ def transaction():
             return "This user does not exist."
 
         transaction_ret = make_transaction(requested_user, dest_user, int(body["amount"]))
-        transaction_final = True
-        while transaction_catch == False:
-            continue
-        transaction_final = False
-        transaction_catch == False
+        if notify not None:
+            if transaction_ret["transaction"] == "confirmed":
+                notify.send(transaction_ret["username"] + ' sent you ' + transaction_ret["tokens_sent"] + 'Bouygues Tokens.')
+            else:
+                notify.send('Transaction with ' + transaction_ret["username"] + 'failed.')
+                transaction_catch == True
+                notify.close()
         return ret
     else:
         # Handle unsupported content types
@@ -181,6 +185,7 @@ def sign_contract():
     
 @sock.route('/')
 def handle_socket(ws):
+    notify = ws
     data = ws.receive()
     print('received message: ' + data)
     with open("./db.json") as file:
@@ -205,15 +210,15 @@ def handle_socket(ws):
         
     ws.send("Connected.")
     print("Serving user: {} - With {} Gb to share".format(rec_data["username"], transaction_gb))
-    while transaction_final == False:
-        continue
+
+    '''
     if transaction_ret["transaction"] == "confirmed":
         ws.send(transaction_ret["username"] + ' sent you ' + transaction_ret["tokens_sent"] + 'Bouygues Tokens.')
     else:
         ws.send('Transaction with ' + transaction_ret["username"] + 'failed.')
     transaction_catch == True
     ws.close()
-
+    '''
 
 if __name__ == "__main__":
     arg = sys.argv[1].lower()

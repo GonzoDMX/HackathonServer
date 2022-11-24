@@ -47,7 +47,7 @@ def make_transaction(user, dest, amount):
 
     # ------------------ WAIT FOR CONFIRMATION ---------------------
     try:
-        confirmed_txn = transaction.wait_for_confirmation(algod_client, txid, 4)
+        confirmed_txn = transaction.wait_for_confirmation(algod_client, txid, 10)
         print("Transaction confirmed!")
         return {"transaction": "confirmed", "tokens_sent" : str(amount), "username" : user["username"]}
     except Exception as err:
