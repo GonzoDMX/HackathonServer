@@ -1,0 +1,11 @@
+// -- NEW USER - BOUYGUES-CLIENT -- //
+curl -X POST -H "Content-type: application/json" -d "{\"username\" : \"user1\", \"type\" : \"bouygues-client\"}" "http://127.0.0.1:5000/create_user"
+
+// -- NEW USER - 3RD-PARTY-- //
+curl -X POST -H "Content-type: application/json" -d "{\"username\" : \"user1\", \"type\" : \"3rd-party\"}" "http://127.0.0.1:5000/create_user"
+
+// -- TRANSACTION -- //
+curl -X POST -H "Content-type: application/json" -d "{\"sender\" : \"user1\", \"receiver\" : \"bouygues-master\", \"type\" : \"points\", \"amount\" : \"1000\"}" "http://127.0.0.1:5000/transaction"
+
+// -- WRITE-CONTRACT -- //
+curl -X POST -H "Content-type: application/json" -d "{\"initiator\" : \"user1\", \"signer\" : \"user2\", \"req-data-amount\" : \"0.5\", \"pay-point-amount\" : \"1000\"}" "http://127.0.0.1:5000/write_contract"
