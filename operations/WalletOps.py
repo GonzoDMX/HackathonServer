@@ -20,15 +20,12 @@ def create_wallet():
     print("My passphrase: {}".format(m))
     return (my_address, secret_key)
 
-def make_transaction(user, dest_address):
+def make_transaction(user, dest_address, amount):
     algod_client = get_algod_client()
     # ------------- DEFINE THE TRANSACTION ---------------------
     params = algod_client.suggested_params()    # Sets the client what will do the transaction for us (with default params)
     params.flat_fee = constants.MIN_TXN_FEE     # idem
     params.fee = 1000                           # idem
-    
-    # Set the amount for the transaction, in MicroAlgos 1000000 = 1 Algo
-    amount = 100000
     
     # Add a personalized note to the transaction
     note = "Thank you for using Bouygues!".encode()
