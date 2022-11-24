@@ -30,8 +30,8 @@ def make_transaction(user, dest, amount):
     algod_client = get_algod_client()
     # ------------- DEFINE THE TRANSACTION ---------------------
     params = algod_client.suggested_params()    # Sets the client what will do the transaction for us (with default params)
-    params.flat_fee = constants.MIN_TXN_FEE     # idem
-    params.fee = 1000                           # idem
+    params.flat_fee = True     # idem
+    params.fee = constants.MIN_TXN_FEE                           # idem
     
     # Add a personalized note to the transaction
     note = "Thank you for using Bouygues!".encode()
