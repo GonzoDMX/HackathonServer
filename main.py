@@ -15,6 +15,7 @@ sock = Sock(app)
 transaction_final = False
 transaction_catch = False
 transaction_ret = {}
+transaction_gb = 0
 
 ''' Handle New User POST requests '''
 @app.route("/create_user", methods=['POST'])
@@ -181,12 +182,15 @@ def handle_socket(ws):
         string = file.read()
         obj = json.loads(string)
 
+    rec_data = json.loads(data)
+
     user_exist = False
 
     # Get user credentials
     for user in obj["users"]:
-        if (user["username"] == data):
+        if user["username"] == rec_data["username"]:
             user_exist = True
+            transaction_gb = int(rec_data["amount"])
 
     # If user doesn't exist abort here
     if not user_exist: 
@@ -195,6 +199,7 @@ def handle_socket(ws):
         return
         
     ws.send("Connected.")
+    print("Serving user: {} - With {} Gb to share".format(rec_data["username"], transaction_gb))
     while transaction_final == False:
         continue
     if transaction_ret["transaction"] == "confirmed":
