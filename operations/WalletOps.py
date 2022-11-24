@@ -27,6 +27,8 @@ def create_wallet():
     return (my_address, secret_key)
 
 def make_transaction(user, dest, amount):
+    print("User type: ".format(type(user)))
+    print(type(dest))
     algod_client = get_algod_client()
     # ------------- DEFINE THE TRANSACTION ---------------------
     params = algod_client.suggested_params()    # Sets the client what will do the transaction for us (with default params)
