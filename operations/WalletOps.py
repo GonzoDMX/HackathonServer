@@ -67,7 +67,7 @@ def exchange_data_for_tokens(user, amount):
     txid = algod_client.send_transaction(signed_txn)
     print("Signed transaction with txID: {}".format(txid))
     try:
-        confirmed_txn = transaction.wait_for_confirmation(algod_client, txid, 4)  
+        confirmed_txn = transaction.wait_for_confirmation(algod_client, txid, 10)
     except Exception as err:
         return {"transaction" : "Failed", "tokens_recvd" : "0"}
     return {"transaction" : "confirmed", "tokens_recvd" : str(amount)}

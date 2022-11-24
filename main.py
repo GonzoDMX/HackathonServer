@@ -142,16 +142,11 @@ def exchange():
             if (user["username"] == body["username"]):
                 user_exist = True
                 requested_user = user
-                print("Send: {} - Addr: {}".format(user["username"], user["public_address"]))
-            if (user["username"] == body["dest"]):
-                dest_user_exist = True
-                dest_user = user
-                print("Dest: {} - Addr: {}".format(user["username"], user["public_address"]))
 
-        if user_exist == False or dest_user_exist == False:
+        if user_exist == False:
             return {"transaction" : "failed", "tokens_sent" : "0", "username" : request_user["username"]}
 
-        return make_transaction(requested_user, dest_user, int(body["amount"]))
+        return exchange_data_for_tokens(requested_user, int(body["amount"]))
     else:
         # Handle unsupported content types
         return 'Content-type not supported.'
