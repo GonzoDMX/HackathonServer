@@ -83,6 +83,7 @@ def check_funding():
 ''' Handle Transaction POST requests '''
 @app.route("/transaction", methods=['POST'])
 def transaction():
+    global tranny
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
         body = request.json
@@ -188,6 +189,7 @@ def sign_contract():
     
 @sock.route('/')
 def handle_socket(ws):
+    global tranny
     notify = ws
     data = ws.receive()
     print('received message: ' + data)
@@ -203,7 +205,7 @@ def handle_socket(ws):
     for user in obj["users"]:
         if user["username"] == rec_data["username"]:
             user_exist = True
-            transaction_gb = int(rec_data["amount"])
+            #transaction_gb = int(rec_data["amount"])
 
     # If user doesn't exist abort here
     if not user_exist: 
@@ -212,7 +214,7 @@ def handle_socket(ws):
         return
         
     ws.send("Connected.")
-    print("Serving user: {} - With {} Gb to share".format(rec_data["username"], transaction_gb))
+    print("Serving user: {} - With {} Gb to share".format(rec_data["username"]))
     
     while tranny == False:
         pass
