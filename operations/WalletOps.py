@@ -7,6 +7,11 @@ from algosdk import account, mnemonic, constants
 from algosdk.v2client import algod
 from algosdk.future import transaction
 
+bouygues = {
+"public_address" : "H4CVM6GSHGVKPBY6TMBTD3QTG6HALYBAUUOTB4NVIKQV745A36XBLXXGRA",
+"private_key" : "jsqiOW4PAnHnu1e2Wa+IKW9xBUAKz9cnsKokdceKKgM/BVZ40jmqp4cemwMx7hM3jgXgIKUdMPG1QqFf86Dfrg=="
+}
+
 def get_algod_client():
     algod_token = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     algod_address = "http://localhost:4001"
@@ -51,6 +56,24 @@ def make_transaction(user, dest, amount):
     send(user["username"] + ' sent you some money.', to=dest["session_id"])
 
     return {"transaction": base64.b64decode(confirmed_txn["txn"]["txn"]["note"]).decode()}
+
+''' User exchanges data for tokens/points '''
+def exchange_data_for_tokens(user, amount):
+    algod_client = get_algod_client()
+    params = algod_client.suggested_params()
+    params.flat_fee = constants.MIN_TXN_FEE
+    params.fee = 1000
+    note = "Thank you for using Bouygues Token!".encode()
+    unsigned_txn = transaction.PaymentTxn(bouygues["public_address"], params, user["public_address"], amount, None, note)
+    signed_txn = unsigned_txn.sign(bouygues["private_key"])
+    txid = algod_client.send_transaction(signed_txn)
+    print("Signed transaction with txID: {}".format(txid))
+    try:
+        confirmed_txn = transaction.wait_for_confirmation(algod_client, txid, 4)  
+    except Exception as err:
+        return {"transaction" : "Failed", "tokens_recvd" : "0"}
+    return {"transaction" : "confirmed", "tokens_recvd" : str(amount)}
+
 
 def check_funding(wallet_address):
     client = get_algod_client()

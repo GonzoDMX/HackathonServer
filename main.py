@@ -4,7 +4,7 @@ import sys
 import json
 from flask import Flask, request
 from flask_socketio import SocketIO, send, emit
-from operations.WalletOps import create_wallet, check_funding as get_funding, make_transaction
+from operations.WalletOps import create_wallet, check_funding as get_funding, make_transaction, exchange_data_for_tokens
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -92,6 +92,38 @@ def transaction():
             if (user["username"] == body["dest"]):
                 dest_user_exist = True
                 dest_user = user
+
+        if (user_exist == False or dest_user_exist == False):
+            return "This user does not exist."
+
+        return make_transaction(requested_user, dest_user["public_address"], int(body["amount"]))
+    else:
+        # Handle unsupported content types
+        return 'Content-type not supported.'
+
+
+''' Handle Data Exchange POST requests '''
+''' Example of data struct: { "username" : "user1", "amount" : "1000" }'''
+@app.route("/exchange", methods=['POST'])
+def exchange():
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        body = request.json
+        print("Processing transaction: {}".format(body))
+
+        with open("./db.json") as file:
+            string = file.read()
+            obj = json.loads(string)
+
+        user_exist = False
+        dest_user_exist = False
+        requested_user = {}
+        dest_user = {}
+
+        for user in obj["users"]:
+            if (user["username"] == body["username"]):
+                user_exist = True
+                requested_user = user
 
         if (user_exist == False or dest_user_exist == False):
             return "This user does not exist."
