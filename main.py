@@ -94,7 +94,7 @@ def transaction():
         if (user_exist == False or dest_user_exist == False):
             return "This user does not exist."
 
-        return make_transaction(requested_user, dest_user["public_address"], body["amount"])
+        return make_transaction(requested_user, dest_user["public_address"], int(body["amount"]))
     else:
         # Handle unsupported content types
         return 'Content-type not supported.'
