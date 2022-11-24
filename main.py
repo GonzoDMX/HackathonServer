@@ -183,15 +183,17 @@ def handle_socket(ws):
 
     user_exist = False
 
+    # Get user credentials
     for user in obj["users"]:
         if (user["username"] == data):
             user_exist = True
-            user["session_id"] = request.sid;
 
-    if (user_exist == False): 
+    # If user doesn't exist abort here
+    if !user_exist: 
         ws.send("This user does not exist.")
         ws.close()
         return
+        
     ws.send("Connected.")
     while transaction_final == False:
         continue
