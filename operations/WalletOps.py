@@ -27,8 +27,6 @@ def create_wallet():
     return (my_address, secret_key)
 
 def make_transaction(user, dest, amount):
-    print("User type: ".format(type(user)))
-    print(type(dest))
     algod_client = get_algod_client()
     # ------------- DEFINE THE TRANSACTION ---------------------
     params = algod_client.suggested_params()    # Sets the client what will do the transaction for us (with default params)
@@ -38,7 +36,7 @@ def make_transaction(user, dest, amount):
     # Add a personalized note to the transaction
     note = "Thank you for using Bouygues!".encode()
     # Unsigned Transaction Object defined here
-    unsigned_txn = transaction.PaymentTxn(user["public_address"], params, dest["public_address"], int(amount), None, note)
+    unsigned_txn = transaction.PaymentTxn(user["public_address"], params, dest["public_address"], amount, None, note)
     # ----------------- SIGN THE TRANSACTION WITH PRIVATE KEY ---------
     signed_txn = unsigned_txn.sign(user["private_key"])
 
