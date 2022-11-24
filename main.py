@@ -108,11 +108,13 @@ def transaction():
 
         transaction_ret = make_transaction(requested_user, dest_user, int(body["amount"]))
         if notify is not None:
+            print("Notifying {}".format(dest_user["username"]))
             if transaction_ret["transaction"] == "confirmed":
+                print("Notify confirmed")
                 notify.send(transaction_ret["username"] + ' sent you ' + transaction_ret["tokens_sent"] + 'Bouygues Tokens.')
             else:
+                print("Notify failed")
                 notify.send('Transaction with ' + transaction_ret["username"] + 'failed.')
-                transaction_catch == True
                 notify.close()
         return transaction_ret
     else:
